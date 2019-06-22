@@ -17,7 +17,6 @@ depcomp
 install-sh
 *.deps/
 *.libs
-*Makefile
 *Makefile.in
 ltmain.sh
 missing
