@@ -34,21 +34,30 @@ namespace libSOC {
      * \param num PWM number on that chip
      * \param  invert Invert the polarity if true
      */
-    static pwm* get(unsigned int chip, unsigned int num, bool invert = false);
+    static pwm* get(unsigned int chip, unsigned int num, bool invert = false)
+          {
+              return new pwm;
+          }
 
 
     /**
      * \brief Enable the PWM
      * \return TRUE on success
      */
-    bool enable();
+    bool enable()
+          {
+              return true;
+          }
 
 
     /**
      * \brief Disable the PWM
      * \return TRUE on success
      */
-    bool disable();
+    bool disable()
+          {
+              return true;
+          }
 
 
     /**
@@ -57,7 +66,10 @@ namespace libSOC {
      * \param dutyCycle in ns
      * \return true if is input
      */
-    bool setPulse(unsigned int period, unsigned int duty);
+    bool setPulse(unsigned int period, unsigned int duty)
+          {
+              return true;
+          }
 
 
   private:

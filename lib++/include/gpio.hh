@@ -22,6 +22,10 @@
 #define _LIBSOC_GPIO_HH_
 
 
+#include <stdio.h>
+#include <string.h>
+
+
 namespace libSOC {
 
 
@@ -33,34 +37,59 @@ namespace libSOC {
     /**
      * Get the GPIO object singleton for the specified pin
      */
-    static gpio* get(unsigned int pin);
+    static gpio* get(unsigned int pin)
+          {
+              gpio *p = new gpio;
+
+              char name[32];
+              sprintf(name, "PIN%d", pin);
+              p->mPin = strdup(name);
+
+              return p;
+          }
 
 
     /**
      * Get the GPIO object singleton for the named pin
      */
-    static gpio* get(const char* name);
+    static gpio* get(const char* name)
+          {
+              gpio *p = new gpio;
+
+              p->mPin = name;
+
+              return p;
+          }
 
         
     /**
      * \brief set GPIO to output
      * \return TRUE on success
      */
-    bool makeOutput();
+    bool makeOutput()
+          {
+              return true;
+          }
 
 
     /**
      * \brief set GPIO to input, with no pull, pull-up, or pull-down
      * \return TRUE on success
      */
-    bool makeInput(inputMode_t mode = NO_PULL);
+    bool makeInput(inputMode_t mode = NO_PULL)
+          {
+              return true;
+          }
 
 
     /**
      * \brief Check the direction of the GPIO
      * \return true if is input
      */
-    bool isInput();
+    bool isInput()
+          {
+              return true;
+          }
 
 
     /**
@@ -68,7 +97,11 @@ namespace libSOC {
      * \param val Set to HIGH if true
      * \return true is succesful
      */
-    bool setValue(bool val);
+    bool setValue(bool val)
+          {
+              printf("%s = %d\n", mPin, val);
+              return true;
+          }
 
 
     /**
@@ -76,11 +109,14 @@ namespace libSOC {
      * \return 1 if HIGH, 0 otherwiseb
 
      */
-    bool getValue();
+    bool getValue()
+          {
+              return 1;
+          }
     
     
   private:
-    void *m_imp;
+      const char* mPin;
   };
 
 };

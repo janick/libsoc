@@ -38,35 +38,64 @@ namespace libSOC {
   public:
     typedef enum {WIDTH = 128, HEIGHT = 64} size_t;
 
-    SH1106(i2c* i2cDev, gpio* rst, unsigned char height = 32);
+    SH1106(i2c* i2cDev, gpio* rst, unsigned char height = 32)
+          {
+          }
 
-    void begin(uint8_t *splash = NULL);
+    void begin(uint8_t *splash = 0)
+          {
+          }
   
-    void command(uint8_t c);
-    void data(uint8_t c);
+    void command(uint8_t c)
+          {
+          }
+
+    void data(uint8_t c)
+          {
+          }
   
     /** Reset the display */
-    virtual void reset(void);
+    virtual void reset(void)
+          {
+          }
 
     /** Clear the display */
-    virtual void clear(void);
+    virtual void clear(void)
+          {
+          }
 
     /** Refresh the display */
-    virtual void refresh(void);
+    virtual void refresh(void)
+          {
+          }
 
     /** Return the width of the display, in pixels */
-    virtual uint16_t getWidth(void);
+    virtual uint16_t getWidth(void)
+          {
+              return 128;
+          }
   
     /** Return the height of the display, in pixels */
-    virtual uint16_t getHeight(void);
+    virtual uint16_t getHeight(void)
+          {
+              return 64;
+          }
 
     /** Set a color pixel */
-    virtual void drawPixel(int16_t x, int16_t y, RGB::rgb_t color);
+    virtual void drawPixel(int16_t x, int16_t y, RGB::rgb_t color)
+          {
+          }
 
     /* Get the color of a pixel */
-    virtual RGB::rgb_t getPixel(int16_t x, int16_t y);
+    virtual RGB::rgb_t getPixel(int16_t x, int16_t y)
+          {
+              return RGB::black;
+          }
 
-    virtual bool saveScreen(const char* fname);
+    virtual bool saveScreen(const char* fname)
+          {
+              return true;
+          }
     
   private:
     unsigned char m_height;

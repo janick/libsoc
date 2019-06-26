@@ -2,7 +2,6 @@
 #define _LIBSOC_I2C_H_
 
 #include <stdint.h>
-#include <linux/i2c-dev.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,11 +16,8 @@ extern "C" {
  */
 
 typedef struct {
-  int fd;
   uint8_t bus;
   uint8_t address;
-  struct i2c_rdwr_ioctl_data packets;
-  struct i2c_msg messages[2];
 } i2c;
 
 /**
@@ -31,7 +27,14 @@ typedef struct {
  * \param uint8_t i2c_address - 
  * \return i2c* struct pointer or NULL on failure
  */
-i2c * libsoc_i2c_init (uint8_t i2c_bus, uint8_t i2c_address);
+i2c * libsoc_i2c_init (uint8_t i2c_bus, uint8_t i2c_address)
+{
+    i2c *p = new i2c;
+
+    *p = {i2c_bus, i2c_address};
+
+    return p;
+}
 
 /**
  * \fn libsoc_i2c_free (i2c * i2c)
@@ -39,7 +42,11 @@ i2c * libsoc_i2c_init (uint8_t i2c_bus, uint8_t i2c_address);
  * \param i2c* i2c - valid i2c struct pointer
  * \return EXIT_SUCCESS or EXIT_FAILURE
  */
-int libsoc_i2c_free (i2c * i2c);
+int libsoc_i2c_free (i2c * i2c)
+{
+    delete i2c;
+    return 0;
+}
 
 /**
  * \fn libsoc_i2c_write(i2c *i2c, uint8_t *buffer, uint16_t len)
@@ -49,7 +56,10 @@ int libsoc_i2c_free (i2c * i2c);
  * \param uint16_t len - length of buffer in bytes
  * \return EXIT_SUCCESS or EXIT_FAILURE 
  */
-int libsoc_i2c_write (i2c * i2c, uint8_t * buffer, uint16_t len);
+int libsoc_i2c_write (i2c * i2c, uint8_t * buffer, uint16_t len)
+{
+    return 0;
+}
 
 /**
  * \fn libsoc_i2c_read(i2c *i2c, uint8_t *buffer, uint16_t len)
@@ -59,7 +69,10 @@ int libsoc_i2c_write (i2c * i2c, uint8_t * buffer, uint16_t len);
  * \param uint16_t len - length of buffer in bytes
  * \return EXIT_SUCCESS or EXIT_FAILURE 
  */
-int libsoc_i2c_read (i2c * i2c, uint8_t * buffer, uint16_t len);
+int libsoc_i2c_read (i2c * i2c, uint8_t * buffer, uint16_t len)
+{
+    return 0;
+}
 
 /**
  * \fn libsoc_i2c_set_timeout(i2c *i2c, int timeout)
@@ -68,7 +81,10 @@ int libsoc_i2c_read (i2c * i2c, uint8_t * buffer, uint16_t len);
  * \param i2c *i2c - valid i2c device struct
  * \return EXIT_SUCCESS or EXIT_FAILURE 
  */
-int libsoc_i2c_set_timeout(i2c * i2c, int timeout);
+int libsoc_i2c_set_timeout(i2c * i2c, int timeout)
+{
+    return 0;
+}
 
 #ifdef __cplusplus
 }

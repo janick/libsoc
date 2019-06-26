@@ -29,114 +29,178 @@ namespace libSOC {
   class gfx {
 
   public:
-    gfx(RGB::driver &driver);
+    gfx(RGB::driver &driver)
+        : m_drv(driver)
+          {
+          }
 
     /** Return the width of the display */
-    uint16_t getWidth(void);
+    uint16_t getWidth(void)
+          {
+              return 128;
+          }
 
     /** Return the height of the display */
-    uint16_t getHeight(void);
+    uint16_t getHeight(void)
+          {
+              return 64;
+          }
 
     /** Explicitly update the screen */
-    virtual void refreshScreen(void);
+    virtual void refreshScreen(void)
+          {
+          }
 
     /** Automatically (or not) update the screen after every action
      *  Return the previous setting.
      *  By default, auto-refresh is ON.
      */
-    virtual bool setAutoRefresh(bool is_on);
+    virtual bool setAutoRefresh(bool is_on)
+          {
+              return true;
+          }
 
     /** Fill the entire screen with one color */
-    virtual void clearScreen(void);
+    virtual void clearScreen(void)
+          {
+          }
 
     /** Clear the screen */
-    virtual void fillScreen(RGB::rgb_t color);
+    virtual void fillScreen(RGB::rgb_t color)
+          {
+          }
 
     /** Draw a line from (x0,y0) to (x1,y1) */
     virtual void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, 
-			  RGB::rgb_t color);
+			  RGB::rgb_t color)
+          {
+          }
 
     /** Draw a line from (x,y) to (x,y_h) */
-    virtual void drawFastVLine(uint16_t x, uint16_t y, uint16_t h, RGB::rgb_t color);
+    virtual void drawFastVLine(uint16_t x, uint16_t y, uint16_t h, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a line from (x,y) to (x+w,y) */
-    virtual void drawFastHLine(uint16_t x, uint16_t y, uint16_t w, RGB::rgb_t color);
+    virtual void drawFastHLine(uint16_t x, uint16_t y, uint16_t w, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a hollow rectangle from (x,y) ro (x+w,y+h) */
     virtual void drawRect(uint16_t x, uint16_t y,
 			  uint16_t w, uint16_t h, 
-			  RGB::rgb_t color);
+			  RGB::rgb_t color)
+          {
+          }
 
     /** Draw a filled rectangle from (x,y) ro (x+w,y+h) */
     virtual void fillRect(uint16_t x, uint16_t y,
 			  uint16_t w, uint16_t h, 
-			  RGB::rgb_t color);
+			  RGB::rgb_t color)
+          {
+          }
 
     /** Draw a hollow rounded rectangle from (x,y) ro (x+w,y+h) with corner radius r*/
     void drawRoundRect(uint16_t x, uint16_t y,
 		       uint16_t w, uint16_t h,
-		       uint16_t r, RGB::rgb_t color);
+		       uint16_t r, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a hollow rounded rectangle from (x,y) ro (x+w,y+h) with corner radius r*/
     void fillRoundRect(uint16_t x, uint16_t y,
 		       uint16_t w, uint16_t h,
-		       uint16_t r, RGB::rgb_t color);
+		       uint16_t r, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a hollow circle centered at (x0,y0) and radius r */
-    void drawCircle(uint16_t x, uint16_t y, uint16_t r, RGB::rgb_t color);
+    void drawCircle(uint16_t x, uint16_t y, uint16_t r, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a filled circle centered at (x0,y0) and radius r */
-    void fillCircle(uint16_t x, uint16_t y, uint16_t r, RGB::rgb_t color);
+    void fillCircle(uint16_t x, uint16_t y, uint16_t r, RGB::rgb_t color)
+          {
+          }
 
     /** Draw a hollow triangle between (x0,y0), (x1,y1) and (x2,y2) */
     void drawTriangle(uint16_t x0, uint16_t y0,
 		      uint16_t x1, uint16_t y1,
 		      uint16_t x2, uint16_t y2,
-		      RGB::rgb_t color);
+		      RGB::rgb_t color)
+          {
+          }
 
     /** Draw a filled triangle between (x0,y0), (x1,y1) and (x2,y2) */
     void fillTriangle(uint16_t x0, uint16_t y0,
 		      uint16_t x1, uint16_t y1,
 		      uint16_t x2, uint16_t y2,
-		      RGB::rgb_t color);
+		      RGB::rgb_t color)
+          {
+          }
 
     /** Draw a bitmap in the area between (x,y) and (x+w,y+h) */
     void drawBitmap(uint16_t x, uint16_t y, 
 		    const uint8_t *bitmap,
 		    uint16_t w, uint16_t h,
-		    RGB::rgb_t color);
+		    RGB::rgb_t color)
+          {
+          }
 
     /** Position the text curser at (x,y) in pixels */
-    void setCursor(uint16_t x, uint16_t y);
+    void setCursor(uint16_t x, uint16_t y)
+          {
+          }
 
     /** Move the text curser by (x,y) in pixels */
-    void moveCursor(uint16_t x, uint16_t y);
+    void moveCursor(uint16_t x, uint16_t y)
+          {
+          }
 
     /** Return the X position the text curser at in pixels */
-    uint16_t getCursorX(void);
+    uint16_t getCursorX(void)
+          {
+              return 0;
+          }
 
     /** Return the Y position the text curser at in pixels */
-    uint16_t getCursorY(void);
+    uint16_t getCursorY(void)
+          {
+              return 0;
+          }
 
     /** Set the text color with transparent background */
-    void setTextColor(RGB::rgb_t c);
+    void setTextColor(RGB::rgb_t c)
+          {
+          }
 
     /** Set the text and background color
      *  If the background color is the same as the foreground color, the background is transparent.
      */
-    void setTextColor(RGB::rgb_t c, RGB::rgb_t bg);
+    void setTextColor(RGB::rgb_t c, RGB::rgb_t bg)
+          {
+          }
 
     /** Set the text size */
-    void setTextSize(uint8_t s);
+    void setTextSize(uint8_t s)
+          {
+          }
 
     /** Set if text wraps or not */
-    void setTextWrap(bool w);
+    void setTextWrap(bool w)
+          {
+          }
 
     /** Write the character at the current cursor position */
-    void write(char c);
+    void write(char c)
+          {
+          }
 
     /** Write the characters at the current cursor position */
-    void write(const char* c);
+    void write(const char* c)
+          {
+          }
 
   protected:
     RGB::driver &m_drv;
