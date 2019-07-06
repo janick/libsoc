@@ -168,9 +168,23 @@ libSOC::gpio::makeInput()
 
 
 bool
-libSOC::gpio::makeInterrupt(void (*fct)(void), bool onRise)
+libSOC::gpio::makeInterrupt(void (*fct)(void), libSOC::gpio::edge_t edge)
 {
-    return wiringPiISR(((gpioImp_t*) m_imp)->pinNum, (onRise) ? INT_EDGE_RISING : INT_EDGE_FALLING, fct) == 0;
+    int mode = 0;
+
+    switch (edge) {
+    case RISING:
+        mode = INT_EDGE_FALLING;
+        break;
+    case FALLING:
+        mode = INT_EDGE_RISING;
+        break;
+    case BOTH:
+        mode = INT_EDGE_FALLING | INT_EDGE_RISING;
+        break;
+    }
+
+    return wiringPiISR(((gpioImp_t*) m_imp)->pinNum, mode, fct) == 0;
 }
 
 
