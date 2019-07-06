@@ -55,6 +55,13 @@ namespace libSOC {
 
 
     /**
+     * \brief set GPIO to interrupt with specified callback function
+     * \return TRUE on success
+     */
+      bool makeInterrupt(void (*fct)(void), bool onRise = true);
+
+
+    /**
      * \brief Check the direction of the GPIO
      * \return true if is input
      */

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 Janick Bergeron
+// Copyright (c) 2016-2019 Janick Bergeron
 // All Rights Reserved
 //
 //   Licensed under the Apache License, Version 2.0 (the
@@ -21,30 +21,86 @@
 #include "gpio.hh"
 
 
-#include "libsoc_gpio.h"
-#include "libsoc_board.h"
+#include "wiringPi.h"
 
 #include <map>
+#include <stdio.h>
+#include <string.h>
 
+struct pinMap_s {
+    const char*  name;
+    unsigned int gpioNum;
+    unsigned int wiPiNum;
+} gPinMap[29] = {{"PIN3",   2,  8},
+                 {"PIN5",   3,  9},
+                 {"PIN7",   4,  7},
+                 {"PIN8",  14, 15},
+                 {"PIN10", 15, 16},
+                 {"PIN11", 17,  0},
+                 {"PIN12", 18,  1},
+                 {"PIN13", 27, 13},
+                 {"PIN15", 22, 15},
+                 {"PIN16", 23,  4},
+                 {"PIN18", 24,  5},
+                 {"PIN19", 10, 19},
+                 {"PIN21",  9, 13},
+                 {"PIN22", 25,  6},
+                 {"PIN23", 11, 14},
+                 {"PIN24",  8, 10},
+                 {"PIN26",  7, 11},
+                 {"PIN27",  0, 30},
+                 {"PIN28",  1, 31},
+                 {"PIN29",  5, 21},
+                 {"PIN31",  6, 22},
+                 {"PIN32", 12, 26},
+                 {"PIN33", 13, 23},
+                 {"PIN35", 19, 24},
+                 {"PIN36", 16, 27},
+                 {"PIN37", 26, 25},
+                 {"PIN38", 20, 28},
+                 {"PIN40", 21, 29},
+                 {NULL,     0,  0}};
+
+
+typedef struct gpioImp_s {
+    int  pinNum;
+    bool isInput;
+} gpioImp_t;
 
 static std::map<unsigned int, libSOC::gpio*>  g_singletons;
-static board_config                          *g_board      = NULL;
-
+static bool init = false;
 
 libSOC::gpio*
 libSOC::gpio::get(unsigned int pin)
 {
-  libSOC::gpio *p = g_singletons[pin];
+    if (!init) {
+        wiringPiSetup();
+        init = true;
+    }
 
-  if (p == NULL) {
-    void *imp = libsoc_gpio_request(pin, LS_SHARED);
-    if (imp == NULL) return NULL;
+    int wiPin = -1;
+    for (unsigned int i = 0; gPinMap[i].name != NULL; i++) {
+        if (gPinMap[i].gpioNum == pin) {
+            wiPin = gPinMap[i].wiPiNum;
+            break;
+        }
+    }
+    if (wiPin < 0) {
+        fprintf(stderr, "Invalid pin number %d.\n", pin);
+        return NULL;
+    }
+      
+    libSOC::gpio *p = g_singletons[wiPin];
+    if (p != NULL) return p;
 
     p = new libSOC::gpio();
+
+    gpioImp_t *imp = new gpioImp_t;
+    imp->pinNum = wiPin;
+    
     p->m_imp = imp;
     
-    g_singletons[pin] = p;
-  }
+    g_singletons[wiPin] = p;
 
   return p;
 }
@@ -53,52 +109,90 @@ libSOC::gpio::get(unsigned int pin)
 libSOC::gpio*
 libSOC::gpio::get(const char* name)
 {
-  if (g_board == NULL) {
-    g_board = libsoc_board_init();
-  }
+    if (!init) {
+        wiringPiSetup();
+        init = true;
+    }
 
-  int pin = libsoc_board_gpio_id(g_board, name);
-  if (pin < 0) {
-    fprintf(stderr, "ERROR: GPIO pin \"%s\" unknown.\n", name);
-    return NULL;
-  }
+    int wiPin = -1;
+    for (unsigned int i = 0; gPinMap[i].name != NULL; i++) {
+        if (strcmp(gPinMap[i].name, name) == 0) {
+            libSOC::gpio *p = g_singletons[gPinMap[i].gpioNum];
+            if (p != NULL) return p;
+            
+            wiPin = gPinMap[i].wiPiNum;
+            break;
+        }
+    }
+    if (wiPin < 0) {
+        fprintf(stderr, "Invalid pin name \"%s\".\n", name);
+        return NULL;
+    }
+      
+    libSOC::gpio *p = g_singletons[wiPin];
+    if (p != NULL) return p;
 
-  return get((unsigned int) pin);
+    p = new libSOC::gpio();
+
+    gpioImp_t *imp = new gpioImp_t;
+    imp->pinNum = wiPin;
+    
+    p->m_imp = imp;
+    
+    g_singletons[wiPin] = p;
+
+    return p;
 }
 
         
 bool
 libSOC::gpio::makeOutput()
 {
-  return (libsoc_gpio_set_direction(m_imp, OUTPUT) == EXIT_SUCCESS);
+    pinMode(((gpioImp_t*) m_imp)->pinNum, OUTPUT);
+    ((gpioImp_t*) m_imp)->isInput = false;
+
+    pullUpDnControl(((gpioImp_t*) m_imp)->pinNum, PUD_OFF);
+    return true;
 }
 
 
 bool
 libSOC::gpio::makeInput()
 {
-  return (libsoc_gpio_set_direction(m_imp, INPUT) == EXIT_SUCCESS);
+    pinMode(((gpioImp_t*) m_imp)->pinNum, INPUT);
+    ((gpioImp_t*) m_imp)->isInput = true;
+
+    pullUpDnControl(((gpioImp_t*) m_imp)->pinNum, PUD_OFF);
+    return true;
+}
+
+
+bool
+libSOC::gpio::makeInterrupt(void (*fct)(void), bool onRise)
+{
+    return wiringPiISR(((gpioImp_t*) m_imp)->pinNum, (onRise) ? INT_EDGE_RISING : INT_EDGE_FALLING, fct) == 0;
 }
 
 
 bool
 libSOC::gpio::isInput()
 {
-  return (libsoc_gpio_get_direction(m_imp) == INPUT);
+    return     ((gpioImp_t*) m_imp)->isInput;
 }
 
 
 bool
 libSOC::gpio::setValue(bool val)
 {
-  return (libsoc_gpio_set_level(m_imp, (val) ? HIGH : LOW) == EXIT_SUCCESS);
+    digitalWrite(((gpioImp_t*) m_imp)->pinNum, val);
+    return true;
 }
 
 
 bool
 libSOC::gpio::getValue()
 {
-  return (libsoc_gpio_get_level(m_imp) ==  HIGH);
+    return digitalRead(((gpioImp_t*) m_imp)->pinNum);
 }
     
     
